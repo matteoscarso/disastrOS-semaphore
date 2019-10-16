@@ -21,7 +21,7 @@ void internal_semOpen(){
   		return;
   	   }
   	}
-  List_insert(&semaphore_list, semaphores_list.last, (ListItem*) sem);		//inserisco il semaforo nella lista dei semafori
+  List_insert(&semaphores_list, semaphores_list.last, (ListItem*) sem);		//inserisco il semaforo nella lista dei semafori
   
   printf("Il semaforo con id=%d è stato allocato correttamente!\n", id);
   
@@ -40,7 +40,7 @@ void internal_semOpen(){
   SemDescriptorPtr* desc_ptr = SemDescriptorPtr_alloc(desc);		//allocazione puntatore a descrittore
 
   desc->ptr = desc_ptr;			
-  List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) dec_ptr);		//puntatore aggiunto alla lista dei puntatori
+  List_insert(&sem->descriptors, sem->descriptors.last, (ListItem*) desc_ptr);		//puntatore aggiunto alla lista dei puntatori
 
   running->syscall_retvalue = desc->fd;			//restituisco valore file descriptor
   return;

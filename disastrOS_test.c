@@ -3,7 +3,7 @@
 #include <poll.h>
 
 #include "disastrOS.h"
-
+int sem1;
 // we need this to handle the sleep state
 void sleeperFunction(void* args){
   printf("Hello, I am the sleeper, and I sleep %d\n",disastrOS_getpid());
@@ -18,6 +18,7 @@ void childFunction(void* args){
   printf("I will iterate a bit, before terminating\n");
   int type=0;
   int mode=0;
+  //sem1=disastrOS_semopen(1,1);
   int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
   printf("fd=%d\n", fd);
   printf("PID: %d, terminating\n", disastrOS_getpid());

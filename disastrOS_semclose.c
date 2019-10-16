@@ -9,9 +9,9 @@
 void internal_semClose(){
   int id = running->syscall_args[0];
   
-  SemDescriptor* sem_desc = SemDescriptorListbyId(&running->sem_descriptor, id);
+  SemDescriptor* sem_desc = SemDescriptorListbyId(&running->sem_descriptors, id);
   
-  List_detach(&running->sem_descriptor, (ListItem*)sem_desc);
+  List_detach(&running->sem_descriptors, (ListItem*)sem_desc);
   
   Semaphore* sem = sem_desc->semaphore;
   
