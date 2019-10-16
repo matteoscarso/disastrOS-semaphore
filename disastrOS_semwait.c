@@ -7,5 +7,10 @@
 #include "disastrOS_semdescriptor.h"
 
 void internal_semWait(){
-  // do stuff :)
+  int fd = running->syscall_args[0];
+  
+  SemDescriptor* desc = SemDescriptorList_byId(&running->sem_descriptors, fd);
+  
+  Semaphore* sem = desc->semaphore;		//prendo il semaforo del descrittore	
+  sem->count--;
 }
