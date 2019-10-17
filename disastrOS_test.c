@@ -15,22 +15,21 @@ void sleeperFunction(void* args){
 
 void childFunction(void* args){
   printf("Hello, I am the child function %d\n",disastrOS_getpid());
-  printf("I will iterate a bit, before terminating\n");
+  /*printf("I will iterate a bit, before terminating\n");
   int type=0;
-  int mode=0;
+  int mode=0;*/
   sem1=disastrOS_semOpen(1,1);
-  int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
-  printf("fd=%d\n", fd);
+  /*int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
+  printf("fd=%d\n", fd);*/
   printf("PID: %d, terminating\n", disastrOS_getpid());
   
-  disastrOS_semWait(sem1);
-  disastrOS_semPost(sem1);
+  
   disastrOS_semClose(sem1);
   
-  for (int i=0; i<(disastrOS_getpid()+1); ++i){
+  /*for (int i=0; i<(disastrOS_getpid()+1); ++i){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
     disastrOS_sleep((20-disastrOS_getpid())*5);
-  }
+  }*/
   disastrOS_exit(disastrOS_getpid()+1);
 }
 
@@ -43,7 +42,7 @@ void initFunction(void* args) {
 
   printf("I feel like to spawn 10 nice threads\n");
   int alive_children=0;
-  for (int i=0; i<10; ++i) {
+  /*for (int i=0; i<10; ++i) {
     int type=0;
     int mode=DSOS_CREATE;
     printf("mode: %d\n", mode);
@@ -52,8 +51,9 @@ void initFunction(void* args) {
     printf("fd=%d\n", fd);
     disastrOS_spawn(childFunction, 0);
     alive_children++;
-  }
-
+  }*/
+  disastrOS_spawn(childFunction, 0);
+  alive_children++;
   disastrOS_printStatus();
   int retval;
   int pid;
