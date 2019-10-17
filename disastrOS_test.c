@@ -16,10 +16,33 @@ int rd_idx=0
 unsigned long int shared_variable;
 
 int producer(){
-
+	disastrOS_semWait(sem_empty);
+	disastrOS_semPost(sem_write);
+	
+	int ret=shared_variable;
+	buf[wr_idx]=shared_variable;
+	wr_idx=(write_index+1) % buf_length;
+	shared_variable++;
+	
+	disastrOS_semPost(sem_write);
+	disastrOS_semPost(sem_filled);
+	
+	return ret;
 }
 
 int consumer(){
+	int ret;
+	
+	disastrOS_semWait(sem_filled);
+	disastrOS_semWait(sem_read);
+	
+	ret=buf[rd_idx];
+	rd_idx=(read_index+1)%buf_length;
+	
+	disastrOS_semPost(sem_empty);
+	disastrOS_semPost(sem_read);
+	
+	return ret;
 
 }
 // we need this to handle the sleep state
