@@ -17,8 +17,12 @@ void internal_semClose(){
   
   SemDescriptorPtr* desc_ptr = (SemDescriptorPtr*)List_detach(&sem->descriptors,(ListItem*)(sem_desc->ptr));  
   
+  printf("Semaforo con id=%d chiuso correttamente!\n",sem->id);
+  
   SemDescriptor_free(sem_desc);
   SemDescriptorPtr_free(desc_ptr);
+  
+  
   
   running->syscall_retvalue=0;
   return;
