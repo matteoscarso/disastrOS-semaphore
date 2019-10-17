@@ -4,6 +4,24 @@
 
 #include "disastrOS.h"
 
+#define BUF_LENGTH 50
+#define COUNTER 10
+
+int sem_empty, sem_filled, sem_write, sem_read;
+int buf[BUF_LENGTH];
+int buf_length=BUF_LENGTH;
+int wr_idx=0;
+int rd_idx=0
+
+unsigned long int shared_variable;
+
+int producer(){
+
+}
+
+int consumer(){
+
+}
 // we need this to handle the sleep state
 void sleeperFunction(void* args){
   printf("Hello, I am the sleeper, and I sleep %d\n",disastrOS_getpid());
@@ -15,18 +33,18 @@ void sleeperFunction(void* args){
 
 void childFunction(void* args){
   printf("Hello, I am the child function %d\n",disastrOS_getpid());
-  printf("I will iterate a bit, before terminating\n");
-  int type=0;
-  int mode=0;
-  int fd=disastrOS_openResource(disastrOS_getpid(),type,mode);
-  printf("fd=%d\n", fd);
+  
+  sem_filled=disastrOS_semOpen(1,0);
+  sem_empty=disastrOS_semOpen(2, buf_length);
+  sem_read=disastrOS_semOpen(3,1);
+  sem_write=disastrOS_semOpen(4,1);
+  
+  
+  
   printf("PID: %d, terminating\n", disastrOS_getpid());
 
-  for (int i=0; i<(disastrOS_getpid()+1); ++i){
-    printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);
-    disastrOS_sleep((20-disastrOS_getpid())*5);
-  }
-  disastrOS_exit(disastrOS_getpid()+1);
+  
+  disastrOS_exit(disastrOS_getpid());
 }
 
 
