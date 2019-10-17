@@ -28,7 +28,7 @@ void childFunction(void* args){
   
   
   disastrOS_semClose(sem1);
-  disastrOS_semClose(sem2);
+  
   
   /*for (int i=0; i<(disastrOS_getpid()+1); ++i){
     printf("PID: %d, iterate %d\n", disastrOS_getpid(), i);

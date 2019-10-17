@@ -10,7 +10,7 @@ void internal_semOpen(){
   int id = running->syscall_args[0];		//id del semaforo	
   int count = running->syscall_args[1];		//contatore processi
   
-  if(running->syscall_args[1]<0){
+  if(count<0){
         printf("Allocazione semaforo con id=%d fallita perché count<0\n", id);
         running->syscall_retvalue = DSOS_ESEMOPEN;
         return;
