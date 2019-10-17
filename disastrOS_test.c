@@ -26,6 +26,8 @@ void childFunction(void* args){
   printf("fd=%d\n", fd);*/
   printf("PID: %d, terminating\n", disastrOS_getpid());
   
+  disastrOS_semPost(sem2);
+  disastrOS_semWait(sem2);
   
   disastrOS_semClose(sem1);
   

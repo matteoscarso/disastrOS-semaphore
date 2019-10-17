@@ -11,6 +11,12 @@ void internal_semPost(){
   
   SemDescriptor* desc = SemDescriptorList_byFd(&running->sem_descriptors, fd);
   
+  if(desc==0){
+  	printf("Sempost su semaforo %d fallita!\n",fd);
+  	running->syscall_retvalue = DSOS_ESEMPOST;
+  	return;  	
+  }
+  
   Semaphore* sem = desc->semaphore;		//prendo il semaforo del descrittore	
   sem->count++;
   

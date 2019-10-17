@@ -11,6 +11,12 @@ void internal_semWait(){
   
   SemDescriptor* desc = SemDescriptorList_byFd(&running->sem_descriptors, fd);
   
+  if(desc==0){
+  	printf("Semwait su semaforo %d fallita!\n",fd);
+  	running->syscall_retvalue = DSOS_ESEMWAIT;
+  	return;  	
+  }
+  
   Semaphore* sem = desc->semaphore;		//prendo il semaforo del descrittore
   SemDescriptorPtr* desc_ptr=desc->ptr;	
   sem->count--;
