@@ -10,20 +10,26 @@ void internal_semOpen(){
   int id = running->syscall_args[0];		//id del semaforo	
   int count = running->syscall_args[1];		//contatore processi
   
+  if(running->syscall_args[1]<0){
+        printf("Allocazione semaforo con id=%d fallita perché count<0\n", id);
+        running->syscall_retvalue = DSOS_ESEMOPEN;
+        return;
+   }
+  
   Semaphore* sem = SemaphoreList_byId(&semaphores_list,id);		//controllo se esiste il semaforo tramite id
   
   if(!sem) {								//allocazione semaforo nel caso non esista
   	sem = Semaphore_alloc(id,count);
   	if (!sem)		//controllo allocazione 
   	   {
-  	   	printf("Il semaforo con id=%d non è stato allocato correttamente!\n", id);
+  	   	printf("Il semaforo con id=%d non è stato allocato correttamente! \n", id);
   		running->syscall_retvalue = DSOS_ESEMOPEN;
   		return;
   	   }
   	}
   List_insert(&semaphores_list, semaphores_list.last, (ListItem*) sem);		//inserisco il semaforo nella lista dei semafori
   
-  printf("Il semaforo con id=%d è stato allocato correttamente!\n", id);
+  printf("Il semaforo con id=%d è stato allocato correttamente! \n", id);
   
   SemDescriptor* desc = SemDescriptor_alloc(running->last_sem_fd, sem, running);	//allocazione descrittore semaforoù
   if (!desc) 

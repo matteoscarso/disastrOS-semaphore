@@ -17,12 +17,16 @@ void internal_semClose(){
   
   SemDescriptorPtr* desc_ptr = (SemDescriptorPtr*)List_detach(&sem->descriptors,(ListItem*)(sem_desc->ptr));  
   
-  printf("Semaforo con id=%d chiuso correttamente!\n",sem->id);
+ 
   
   SemDescriptor_free(sem_desc);
   SemDescriptorPtr_free(desc_ptr);
   
-  
+  if(sem->descriptors.size == 0 && sem->waiting_descriptors.size==0){
+        List_detach(&semaphores_list, (ListItem*)sem);
+        Semaphore_free(sem);
+        printf("Chiusura semaforo con id=%d\n",id+1);
+    }
   
   running->syscall_retvalue=0;
   return;
