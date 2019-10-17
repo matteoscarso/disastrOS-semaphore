@@ -9,7 +9,7 @@
 void internal_semPost(){
   int fd = running->syscall_args[0];
   
-  SemDescriptor* desc = SemDescriptorList_byId(&running->sem_descriptors, fd);
+  SemDescriptor* desc = SemDescriptorList_byFd(&running->sem_descriptors, fd);
   
   Semaphore* sem = desc->semaphore;		//prendo il semaforo del descrittore	
   sem->count++;
