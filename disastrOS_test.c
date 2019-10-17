@@ -5,7 +5,7 @@
 #include "disastrOS.h"
 
 #define BUF_LENGTH 50
-#define COUNTER 10
+
 
 int sem_empty, sem_filled, sem_write, sem_read;
 int buf[BUF_LENGTH];
@@ -62,7 +62,7 @@ void childFunction(void* args){
   sem_read=disastrOS_semOpen(3,1);
   sem_write=disastrOS_semOpen(4,1);
   
-  for(int i=0; i < COUNTER; i++){
+  for(int i=0; i < 10; i++){
     if (disastrOS_getpid() % 2 == 0){
      int sv = producer();
      printf("THREAD %d: inserisco nel buffer il valore %d\n", disastrOS_getpid(), sv);
