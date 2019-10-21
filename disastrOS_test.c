@@ -4,7 +4,7 @@
 
 #include "disastrOS.h"
 
-#define BUF_LENGTH 50
+#define BUF_LENGTH 100
 
 
 int sem_empty, sem_filled, sem_write, sem_read;
@@ -17,10 +17,10 @@ int iteration=BUF_LENGTH/5;
 int shared_variable;
 
 void producer(){
+	//funzione produttore che salva nel buffer la variabile condivisa e la incrementa
 	disastrOS_semWait(sem_empty);
 	disastrOS_semWait(sem_write);
 	
-	//int ret=shared_variable;
 	buf[wr_idx]=shared_variable;
 	wr_idx=(wr_idx+1) % buf_length;
 	shared_variable++;
@@ -28,12 +28,10 @@ void producer(){
 	disastrOS_semPost(sem_write);
 	disastrOS_semPost(sem_filled);
 	
-	//return ret;
 }
 
 void consumer(){
-	//int ret=buf[rd_idx-1];
-	
+	//funzione consumatore che legge il valore dal buffer e lo somma nella variabile globale deposit
 	disastrOS_semWait(sem_filled);
 	disastrOS_semWait(sem_read);
 	
@@ -43,7 +41,6 @@ void consumer(){
 	disastrOS_semPost(sem_empty);
 	disastrOS_semPost(sem_read);
 	
-	//return ret;
 
 }
 // we need this to handle the sleep state
@@ -67,11 +64,9 @@ void childFunction(void* args){
   for(int i=0; i < iteration; i++){
     if (disastrOS_getpid() % 2 == 0){
      consumer();
-     //printf("THREAD %d: inserisco nel buffer il valore %d\n", disastrOS_getpid(), sv);
      }
     else {
      producer();
-     //printf("THREAD %d: leggo dal buffer il valore %d\n", disastrOS_getpid(), ret);
     }
   }
   
@@ -93,8 +88,9 @@ void initFunction(void* args) {
   printf("hello, I am init and I just started\n");
   disastrOS_spawn(sleeperFunction, 0);
   
-  shared_variable=1;
-   printf("STATO INIZIALE DEL BUFFER\n shared_variable: %d\n",shared_variable);
+  shared_variable=1;	//inizializzo la variabile condivisa
+  
+   printf("STATO INIZIALE DEL BUFFER\n");
   for(int i=0; i < buf_length; i++){
     printf("%d ", buf[i]);
   }
@@ -127,7 +123,7 @@ void initFunction(void* args) {
 	  }
   }
   
-  printf("STATO FINALE DEL BUFFER\n shared_variable: %d\n",shared_variable);
+  printf("STATO FINALE DEL BUFFER\n");
   for(int i=0; i < buf_length; i++){
     printf("%d ", buf[i]);
   }
