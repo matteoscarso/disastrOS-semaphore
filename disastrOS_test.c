@@ -12,14 +12,15 @@ int buf[BUF_LENGTH];
 int buf_length=BUF_LENGTH;
 int wr_idx=0;
 int rd_idx=0;
+int deposit=0;
+int iteration=BUF_LENGTH/5;
+int shared_variable;
 
-unsigned long int shared_variable;
-
-int producer(){
+void producer(){
 	disastrOS_semWait(sem_empty);
-	disastrOS_semPost(sem_write);
+	disastrOS_semWait(sem_write);
 	
-	int ret=shared_variable;
+	//int ret=shared_variable;
 	buf[wr_idx]=shared_variable;
 	wr_idx=(wr_idx+1) % buf_length;
 	shared_variable++;
@@ -27,22 +28,22 @@ int producer(){
 	disastrOS_semPost(sem_write);
 	disastrOS_semPost(sem_filled);
 	
-	return ret;
+	//return ret;
 }
 
-int consumer(){
-	int ret;
+void consumer(){
+	//int ret=buf[rd_idx-1];
 	
 	disastrOS_semWait(sem_filled);
 	disastrOS_semWait(sem_read);
 	
-	ret=buf[rd_idx];
+	deposit+=buf[rd_idx];
 	rd_idx=(rd_idx+1)%buf_length;
 	
 	disastrOS_semPost(sem_empty);
 	disastrOS_semPost(sem_read);
 	
-	return ret;
+	//return ret;
 
 }
 // we need this to handle the sleep state
@@ -62,14 +63,15 @@ void childFunction(void* args){
   sem_read=disastrOS_semOpen(3,1);
   sem_write=disastrOS_semOpen(4,1);
   
-  for(int i=0; i < 10; i++){
+  
+  for(int i=0; i < iteration; i++){
     if (disastrOS_getpid() % 2 == 0){
-     int sv = producer();
-     printf("THREAD %d: inserisco nel buffer il valore %d\n", disastrOS_getpid(), sv);
+     consumer();
+     //printf("THREAD %d: inserisco nel buffer il valore %d\n", disastrOS_getpid(), sv);
      }
     else {
-     int ret = consumer();
-     printf("THREAD %d: leggo dal buffer il valore %d\n", disastrOS_getpid(), ret);
+     producer();
+     //printf("THREAD %d: leggo dal buffer il valore %d\n", disastrOS_getpid(), ret);
     }
   }
   
@@ -89,16 +91,17 @@ void childFunction(void* args){
 void initFunction(void* args) {
   disastrOS_printStatus();
   printf("hello, I am init and I just started\n");
+  disastrOS_spawn(sleeperFunction, 0);
   
-  
-   printf("STATO INIZIALE DEL BUFFER\n");
+  shared_variable=1;
+   printf("STATO INIZIALE DEL BUFFER\n shared_variable: %d\n",shared_variable);
   for(int i=0; i < buf_length; i++){
     printf("%d ", buf[i]);
   }
   printf("\n");
   
-  shared_variable=1;
-
+  
+  
   printf("I feel like to spawn 10 nice threads\n");
   int alive_children=0;
   for (int i=0; i<10; ++i) {
@@ -115,12 +118,24 @@ void initFunction(void* args) {
 	   pid, retval, alive_children);
     --alive_children;
   }
+  //ciclo "toppa"
+  if(buf_length%5!=0){
+	  for(int i=rd_idx;i<buf_length;i++){
+	  	buf[i]=shared_variable;
+		shared_variable++;
+		deposit+=buf[i];
+	  }
+  }
   
-  printf("STATO FINALE DEL BUFFER\n");
+  printf("STATO FINALE DEL BUFFER\n shared_variable: %d\n",shared_variable);
   for(int i=0; i < buf_length; i++){
     printf("%d ", buf[i]);
   }
   printf("\n");
+  
+  int val_exp=(buf_length*(buf_length+1))/2;
+  
+  printf("Valore ottenuto: %d\nValore atteso: %d\n",deposit,val_exp);
   
   printf("shutdown!");
   disastrOS_shutdown();
