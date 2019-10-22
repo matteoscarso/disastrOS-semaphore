@@ -4,7 +4,7 @@
 
 #include "disastrOS.h"
 
-#define BUF_LENGTH 100
+#define BUF_LENGTH 93
 
 
 int sem_empty, sem_filled, sem_write, sem_read;
