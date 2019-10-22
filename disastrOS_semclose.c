@@ -7,9 +7,9 @@
 #include "disastrOS_semdescriptor.h"
 
 void internal_semClose(){
-  int id = running->syscall_args[0];	//prendo id semaforo
+  int fd = running->syscall_args[0];	//prendo id semaforo
   
-  SemDescriptor* sem_desc = SemDescriptorList_byFd(&running->sem_descriptors, id);
+  SemDescriptor* sem_desc = SemDescriptorList_byFd(&running->sem_descriptors, fd);
   //controllo se trovo il semaforo
   if(sem_desc==0){
         printf("Chiusura semaforo fallita!\n");
@@ -41,7 +41,7 @@ void internal_semClose(){
   if(sem->descriptors.size == 0 && sem->waiting_descriptors.size==0){
         List_detach(&semaphores_list, (ListItem*)sem);
         Semaphore_free(sem);
-        printf("Chiusura semaforo con id=%d\n",id+1);
+        printf("Chiusura semaforo con id=%d\n",fd+1);
     }
   
   running->syscall_retvalue=0;
